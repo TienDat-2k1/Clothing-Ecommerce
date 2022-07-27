@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../context/userContext';
 import {
   createUserDocumentFromAuth,
   signInAuthUserEmailAndPassword,
@@ -15,6 +16,7 @@ const defaultFormFields = {
 };
 
 function SignInForm() {
+  const userCtx = useContext(UserContext);
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields;
 
@@ -28,17 +30,18 @@ function SignInForm() {
     e.preventDefault();
 
     try {
-      const res = await signInAuthUserEmailAndPassword(email, password);
+      const { user } = await signInAuthUserEmailAndPassword(email, password);
       setFormFields(defaultFormFields);
-      console.log(res);
     } catch (error) {
       console.log('login failed');
     }
   };
+
   const signInWithGoogle = async () => {
     const { user } = await signInWithGooglePopup();
     await createUserDocumentFromAuth(user);
   };
+
   return (
     <div className="sign-in-container">
       <h2>Already have an account?</h2>

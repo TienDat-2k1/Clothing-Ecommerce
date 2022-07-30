@@ -1,9 +1,8 @@
-import { useReducer, useState } from 'react';
+import { useState } from 'react';
 
-import {
-  createAuthUserEmailAndPassword,
-  createUserDocumentFromAuth,
-} from '../../utils/firebase/firebase';
+import {} from '../../utils/firebase/firebase';
+import { useDispatch } from 'react-redux/es/exports';
+import { signUpStart } from '../../store/user/userSLice';
 import './SignUpForm.scss';
 import FormInput from '../form-input/FormInput';
 import Button from '../button/Button';
@@ -15,30 +14,16 @@ const init = {
   confirmPassword: '',
 };
 
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case 'DISPLAYNAME':
-      return { ...state, displayName: action.payload.value };
-    case 'EMAIL':
-      return { ...state, email: action.payload.value };
-    case 'PASSWORD':
-      return { ...state, password: action.payload.value };
-    case 'CONFIRMPASSWORD':
-      return { ...state, confirmPassword: action.payload.value };
-
-    default:
-      return state;
-  }
-};
-
 function SignUpForm() {
+  const dispatch = useDispatch();
+
   const [hasError, setHasError] = useState();
 
-  const [state, dispatch] = useReducer(formReducer, init);
+  const [signUpFormInput, setSignUpFormInput] = useState(init);
 
-  const { displayName, email, password, confirmPassword } = state;
+  const { displayName, email, password, confirmPassword } = signUpFormInput;
 
-  const formSubmitHandler = async e => {
+  const formSubmitHandler = e => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -46,40 +31,14 @@ function SignUpForm() {
       return;
     }
 
-    try {
-      const { user } = await createAuthUserEmailAndPassword(email, password);
-
-      await createUserDocumentFromAuth(user, { displayName });
-    } catch (error) {
-      console.log('user creation encountered an error', error);
-    }
+    dispatch(signUpStart({ email, password, displayName }));
+    setSignUpFormInput(init);
   };
 
   const inputHandlerChange = e => {
-    const { name } = e.target;
+    const { name, value } = e.target;
 
-    switch (name) {
-      case 'displayName':
-        dispatch({
-          type: 'DISPLAYNAME',
-          payload: { value: e.target.value },
-        });
-        break;
-      case 'email':
-        dispatch({ type: 'EMAIL', payload: { value: e.target.value } });
-        break;
-      case 'password':
-        dispatch({ type: 'PASSWORD', payload: { value: e.target.value } });
-        break;
-      case 'confirmPassword':
-        dispatch({
-          type: 'CONFIRMPASSWORD',
-          payload: { value: e.target.value },
-        });
-        break;
-      default:
-        break;
-    }
+    setSignUpFormInput({ ...signUpFormInput, [name]: value });
   };
 
   return (

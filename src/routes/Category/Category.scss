@@ -5,7 +5,29 @@
   row-gap: 50px;
 }
 .category-title {
-  font-size: 38px;
   margin-bottom: 25px;
   text-align: center;
+
+  font-size: 38px;
+  font-style: italic;
+  font-weight: 400;
+
+  animation: moveInRight 1s ease-out;
+}
+@keyframes moveInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+    letter-spacing: 35px;
+  }
+
+  80% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0);
+    letter-spacing: 2px;
+  }
 }

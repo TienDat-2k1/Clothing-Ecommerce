@@ -104,7 +104,7 @@ export const createUserDocumentFromAuth = async (
     }
   }
   // return
-  return userDocRef;
+  return userSnapshot;
 };
 
 export const createAuthUserEmailAndPassword = async (email, password) => {
